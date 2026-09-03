@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login</title></head>
+<body>
+	<main><h1>Login</h1><form id="login-form"><label>Username <input required name="username"></label><label>Password <input required type="password" name="password"></label><button type="submit">Login</button></form></main>
+	<script>document.querySelector('#login-form').addEventListener('submit', event => { event.preventDefault(); window.location.href = 'index.html'; });</script>
+</body>
+</html>
