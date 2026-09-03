@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - ruu456-serve-web-page
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Build static HTML from PHP
+        run: |
+          mkdir -p build
+          # Generate index.html by requesting PHP files via CLI
+          php index.php > build/index.html
+          php dashboard.php > build/dashboard.html 2>/dev/null || echo "<!-- dashboard requires auth -->" > build/dashboard.html
+          php mahasiswa.php > build/mahasiswa.html 2>/dev/null || echo "<!-- mahasiswa requires auth -->" > build/mahasiswa.html
+          php skripsi.php > build/skripsi.html 2>/dev/null || echo "<!-- skripsi requires auth -->" > build/skripsi.html
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'build'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
