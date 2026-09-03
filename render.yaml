@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: upm-informatika
+    env: docker
+    plan: free
+    branch: ruu456-serve-web-page
+    autoDeploy: true
+    dockerfilePath: Dockerfile
