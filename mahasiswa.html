@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahasiswa</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 28px;
+            margin: 0;
+            color: #111827;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box input {
+            width: 260px;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .student-link {
+            color: #1d4ed8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .student-link:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-aktif { background: #dcfce7; color: #166534; }
+        .status-cuti { background: #fef3c7; color: #92400e; }
+        .status-drop-out { background: #fee2e2; color: #991b1b; }
+
+        .detail-card {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .subjects-table th,
+        .subjects-table td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .subjects-table th {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .no-result {
+            padding: 16px;
+            color: #6b7280;
+            text-align: center;
+            background: #f9fafb;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page"><div class="panel">
+        <div class="topbar"><h1 class="title">List Mahasiswa</h1><form id="search-form" class="search-box"><input id="search" type="search" placeholder="Cari nama atau NIM..."><button type="submit">Cari</button></form></div>
+        <div id="student-results"></div>
+        <div id="student-detail"></div>
+    </div></div>
+    <script>
+        const students = [
+            { id: '20241001', name: 'Ayu Rahma', generation: '2021', status: 'Aktif', thesis: 'Sudah disubmit', subjects: [['Algoritma', 92], ['Basis Data', 88], ['Pemrograman Web', 95], ['Matematika Diskrit', 90], ['Jaringan Komputer', 87]] },
+            { id: '20241002', name: 'Budi Santoso', generation: '2021', status: 'Cuti', thesis: 'Belum disubmit', subjects: [['Algoritma', 80], ['Basis Data', 82], ['Pemrograman Web', 84], ['Matematika Diskrit', 78], ['Jaringan Komputer', 79]] },
+            { id: '20241003', name: 'Citra Lestari', generation: '2022', status: 'Aktif', thesis: 'Sudah disubmit', subjects: [['Algoritma', 94], ['Basis Data', 90], ['Pemrograman Web', 96], ['Matematika Diskrit', 91], ['Jaringan Komputer', 88]] },
+            { id: '20241004', name: 'Dewi Putri', generation: '2022', status: 'Drop Out', thesis: 'Tidak berlaku', subjects: [['Algoritma', 60], ['Basis Data', 65], ['Pemrograman Web', 58], ['Matematika Diskrit', 63], ['Jaringan Komputer', 66]] },
+            { id: '20241005', name: 'Eko Prasetyo', generation: '2020', status: 'Aktif', thesis: 'Sudah disubmit', subjects: [['Algoritma', 88], ['Basis Data', 86], ['Pemrograman Web', 89], ['Matematika Diskrit', 82], ['Jaringan Komputer', 85]] }
+        ];
+        function renderStudents() {
+            const search = document.querySelector('#search').value.toLowerCase().trim();
+            const filtered = students.filter(student => `${student.id} ${student.name} ${student.generation}`.toLowerCase().includes(search));
+            document.querySelector('#student-results').innerHTML = filtered.length ? `<div class="table-wrap"><table><thead><tr><th>NIM</th><th>Nama</th><th>Angkatan</th><th>Status</th></tr></thead><tbody>${filtered.map(student => `<tr><td><a class="student-link" href="#${student.id}">${student.id}</a></td><td><a class="student-link" href="#${student.id}">${student.name}</a></td><td>${student.generation}</td><td><span class="status-badge status-${student.status.toLowerCase().replaceAll(' ', '-')}">${student.status}</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="no-result">Tidak ada data mahasiswa yang sesuai dengan pencarian.</div>';
+            const selected = filtered[0];
+            document.querySelector('#student-detail').innerHTML = selected ? `<div class="detail-card"><h2 style="margin-top:0; margin-bottom:18px;">Detail Mahasiswa</h2><div class="detail-grid"><div class="detail-item"><span class="detail-label">NIM</span><span class="detail-value">${selected.id}</span></div><div class="detail-item"><span class="detail-label">Nama</span><span class="detail-value">${selected.name}</span></div><div class="detail-item"><span class="detail-label">Angkatan</span><span class="detail-value">${selected.generation}</span></div><div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">${selected.status}</span></div></div><div class="detail-item" style="margin-bottom:20px"><span class="detail-label">Proposal Skripsi</span><span class="detail-value">${selected.thesis}</span></div><h3 style="margin:0 0 10px">Nilai per Mata Kuliah</h3><table class="subjects-table"><thead><tr><th>Mata Kuliah</th><th>Nilai</th></tr></thead><tbody>${selected.subjects.map(subject => `<tr><td>${subject[0]}</td><td>${subject[1]}</td></tr>`).join('')}</tbody></table></div>` : '';
+        }
+        document.querySelector('#search-form').addEventListener('submit', event => { event.preventDefault(); renderStudents(); });
+        renderStudents();
+    </script>
+</body>
+</html>
